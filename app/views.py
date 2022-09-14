@@ -185,8 +185,8 @@ def cost_calculator_view(request):
         if request.method == "POST":
             distance = eval(request.POST.get("distance"))
             weight =eval(request.POST.get("weight")) 
-            total = distance * weight * 5 
-            values = [request.POST.get("pick"),request.POST.get("delivery"),request.POST.get("medium"), distance, weight, total]
+            total = distance * weight * .5
+            values = [request.POST.get("pick"),request.POST.get("delivery"),request.POST.get("medium"), weight, distance, f'Estimate cost is ${total}']
     except:
         total= "invalid"
     print(values)
@@ -434,6 +434,7 @@ def checkout_view(request):
 
 
 def profile_view(request, username):
+    orders = TrackingNumber.objects.filter(user=request.user)
     sidebar = [{"name": "Basic Info", "id":"basic-info","template": "includes/profileTabBasicInfo.html"},
                {"name": "Your Orders", "id":"your-orders", "template": "includes/profileTabYourOrders.html"},
                {"name": "Address Detail", "id":"address-detail", "template": "includes/profileTabAddressDetail.html"},
@@ -441,6 +442,7 @@ def profile_view(request, username):
     context = {
         "sidebar": sidebar,
         "activeSidebar": sidebar[0],
-        "addressDetail": Address.objects.get(user_id = request.user)
+        "addressDetail": Address.objects.get(user_id = request.user),
+        "orders":orders
     }
     return render(request, 'pages/accounts/profile.html', context)
